@@ -8,7 +8,7 @@
 require 'net/http'
 require 'json'
 require 'optparse'
-require 'pp'
+# require 'pp'
 
 API_BASE_URL = 'https://api.coinmarketcap.com/v1/ticker/%s/?convert=%s'
 
@@ -90,7 +90,7 @@ if @options[:above]
 		print 'PRICE WARNING ABOVE'
 		exit_code = 1
 	else
-		print 'PRICE OK >'
+		print 'PRICE OK ABOVE'
 	end
 else
 	if coin_price < @options[:critical_price]
@@ -100,10 +100,10 @@ else
 		print 'PRICE WARNING BELOW'
 		exit_code = 1
 	else
-		print 'PRICE OK <'
+		print 'PRICE OK BELOW'
 	end
 end
 
-puts ' -- %s %.2f|%s=%.2f;%.2f;%.2f;%s' % [@options[:fiat], coin_price, @options[:coin], coin_price, @options[:warning_price], @options[:critical_price], @options[:above] ? '>' : '<']
+puts ' -- %s %.2f|%s=%.2f;%.2f;%.2f;%s' % [@options[:fiat], coin_price, @options[:coin], coin_price, @options[:warning_price], @options[:critical_price], @options[:above] ? 'above' : 'below']
 
 exit exit_code
