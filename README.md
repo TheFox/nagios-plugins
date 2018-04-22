@@ -80,7 +80,7 @@ Here is an example **Commands** configuration:
 
 define command{
 	command_name	check_bsto_series
-	command_line	$USER1$/check_bsto_series.rb --series "$ARG1$" --saison $ARG2$ -w $ARG3$ -c $ARG4$ --lang $ARG5$
+	command_line	$USER1$/check_bsto_series.rb --series "$ARG1$" --season $ARG2$ -w $ARG3$ -c $ARG4$ --lang $ARG5$
 }
 ```
 

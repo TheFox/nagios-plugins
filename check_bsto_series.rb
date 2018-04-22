@@ -9,25 +9,26 @@ require 'optparse'
 require 'pp'
 
 API_BASE_URL = 'https://bs.to/serie/%s/%d'
+STATES = ['OK', 'WARNING', 'CRITICAL', 'UNKNOWN']
 
 @options = {
 	:series_name => nil,
-	:series_saison => nil,
+	:series_season => nil,
 	:warn_episode => nil,
 	:critical_episode => nil,
 	:lang => 'en',
 	:unknown_state => 3,
 }
 opts = OptionParser.new do |o|
-	o.banner = 'Usage: --series <name> --saison <number> -w <episode> -c <episode> --lang en|de'
+	o.banner = 'Usage: --series <name> --season <number> -w <episode> -c <episode> --lang en|de'
 	o.separator('')
 	
 	o.on('-n', '--series <name>', 'Series Name') do |series_name|
 		@options[:series_name] = series_name
 	end
 	
-	o.on('-s', '--saison <name>', 'Saison Number') do |saison|
-		@options[:series_saison] = saison.to_i
+	o.on('-s', '--season <number>', 'Season Number') do |season|
+		@options[:series_season] = season.to_i
 	end
 	
 	o.on('-w', '--warn <episode>', 'Warning Episode') do |episode|
@@ -42,8 +43,8 @@ opts = OptionParser.new do |o|
 		@options[:lang] = lang.downcase
 	end
 	
-	o.on('-u', '--unknown <int>', 'Treat UNKNOWN state with different status code. Default: 3') do |unknown_state|
-		@options[:unknown_state] = unknown_state.to_i
+	o.on('-u', '--unknown <int>', 'Treat UNKNOWN state with different status code. Default: 3') do |state|
+		@options[:unknown_state] = state.to_i
 	end
 	
 	o.on_tail('-h', '--help', 'Show this message.') do
@@ -56,7 +57,7 @@ ARGV << '-h' if ARGV.count == 0
 commands = opts.parse(ARGV)
 
 # Build URL.
-url = API_BASE_URL % [@options[:series_name], @options[:series_saison]]
+url = API_BASE_URL % [@options[:series_name], @options[:series_season]]
 
 uri = URI(url)
 
@@ -65,7 +66,7 @@ response = Net::HTTP.get(uri)
 
 not_found_pos = response.index('Staffel nicht gefunden')
 if not not_found_pos.nil?
-	puts 'UNKNOWN -- Saison not found'
+	puts '%s -- Season not found' % [STATES[@options[:unknown_state]]]
 	exit @options[:unknown_state]
 end
 
@@ -153,7 +154,7 @@ if state == 0
 	lang = elang
 end
 
-state_name = ['OK', 'WARNING', 'CRITICAL', 'UNKNOWN'][state]
+state_name = STATES[state]
 
 puts '%s -- #%d %s %s|%d,%s,%s,%d,%d,%s' % [state_name, id, lang, title,
 	id, lang, title, @options[:warn_episode], @options[:critical_episode], @options[:lang]]
