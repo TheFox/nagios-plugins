@@ -106,7 +106,9 @@ elang = nil
 episodes.each do |episode|
 	etitle, eid, etag = episode
 	
-	etitle = etitle.strip
+	etitle = etitle
+		.strip
+		.gsub(/[^ \-A-Za-z0-9]/, '')
 	eid = eid.to_i
 	elang = etag == 't' ? 'de' : 'en'
 	
