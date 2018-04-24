@@ -8,7 +8,6 @@
 require 'net/http'
 require 'json'
 require 'optparse'
-# require 'pp'
 
 API_BASE_URL = 'https://api.coinmarketcap.com/v1/ticker/%s/?convert=%s'
 
@@ -21,7 +20,7 @@ API_BASE_URL = 'https://api.coinmarketcap.com/v1/ticker/%s/?convert=%s'
 	:above => true,
 }
 opts = OptionParser.new do |o|
-	o.banner = 'Usage: --coin <id> --fiat <name> -w <price> -c <price> [--above|--below]'
+	o.banner = 'Usage: --coin <id> --fiat <name> -w <price> -c <price> [--below]'
 	o.separator('')
 	
 	o.on('-n', '--coin <id>', 'Coin ID') do |coin|
@@ -41,11 +40,7 @@ opts = OptionParser.new do |o|
 		@options[:critical_price] = price.to_f
 	end
 	
-	o.on('-a', '--above', 'Return OK when price is above.') do
-		@options[:above] = true
-	end
-	
-	o.on('-b', '--below', 'Return OK when price is below.') do
+	o.on('-b', '--below', 'Return OK when price is below. Default: false') do
 		@options[:above] = false
 	end
 	
@@ -104,6 +99,6 @@ else
 	end
 end
 
-puts ' -- %s %.2f|%s=%.2f;%.2f;%.2f;%s' % [@options[:fiat], coin_price, @options[:coin], coin_price, @options[:warning_price], @options[:critical_price], @options[:above] ? 'above' : 'below']
+puts ' -- %s %.2f|%s=%.2f;%.2f;%.2f;%s;' % [@options[:fiat], coin_price, @options[:coin], coin_price, @options[:warning_price], @options[:critical_price], @options[:above] ? 'above' : 'below']
 
 exit exit_code

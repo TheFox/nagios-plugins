@@ -6,7 +6,6 @@
 require 'net/http'
 require 'json'
 require 'optparse'
-require 'pp'
 
 API_BASE_URL = 'https://bs.to/serie/%s/%d'
 STATES = ['OK', 'WARNING', 'CRITICAL', 'UNKNOWN']
@@ -64,6 +63,7 @@ uri = URI(url)
 # Make response to API.
 response = Net::HTTP.get(uri)
 
+# This happens when you enter a season that does not exist (yet).
 not_found_pos = response.index('Staffel nicht gefunden')
 if not not_found_pos.nil?
 	puts '%s -- Season not found' % [STATES[@options[:unknown_state]]]
@@ -158,7 +158,7 @@ end
 
 state_name = STATES[state]
 
-puts '%s -- #%d %s %s|%d,%s,%s,%d,%d,%s' % [state_name, id, lang, title,
-	id, lang, title, @options[:warn_episode], @options[:critical_episode], @options[:lang]]
+puts '%s -- #%d %s %s|%d;%s;%s;%d;%d' % [state_name, id, lang, title,
+	id, lang, title, @options[:warn_episode], @options[:critical_episode]]
 
 exit state

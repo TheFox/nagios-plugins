@@ -23,7 +23,7 @@ Here is an example **Commands** configuration:
 
 define command{
     command_name    check_bitcoin_price_above
-    command_line    $USER1$/check_bitcoin_price.rb --coin $ARG1$ --fiat $ARG2$ --warn $ARG3$ --critical $ARG4$ --above
+    command_line    $USER1$/check_bitcoin_price.rb --coin $ARG1$ --fiat $ARG2$ --warn $ARG3$ --critical $ARG4$
 }
 
 define command{
@@ -100,7 +100,6 @@ define service{
     use                             generic-service
     host_name                       fake
     service_description             Family Guy
-    servicegroups                   series_services
     check_command                   check_bsto_series!Family-Guy!15!19!20!de
 }
 ```
