@@ -104,6 +104,74 @@ define service{
 }
 ```
 
+## Check Twitter Followers Nagios Plugin
+
+Script: [check_twitter_followers.rb](check_twitter_followers.rb)
+
+This script checks the Twitter Followers of any given user.
+
+It has 3 different operation modes.
+
+1. Check Twitter Followers Above
+2. Check Twitter Followers Below
+3. Collect Data
+
+The 3. one always returns OK state. This is only for collecting data, for example to show in a graph. 1 and 2 are designed to send you a notifcation.
+
+![](https://img.fox21.at/public/20180424/nagios_s.png)
+
+### Usage
+
+Here is an example **Commands** configuration:
+
+```
+# commands.cfg
+
+define command{
+	command_name	check_twitter_followers_onlydata
+	command_line	$USER1$/check_twitter_followers.rb -u $ARG1$
+}
+
+define command{
+	command_name	check_twitter_followers_above
+	command_line	$USER1$/check_twitter_followers.rb -u $ARG1$ --warning $ARG2$ --critical $ARG3$ --above
+}
+
+define command{
+	command_name	check_twitter_followers_below
+	command_line	$USER1$/check_twitter_followers.rb -u $ARG1$ --warning $ARG2$ --critical $ARG3$
+}
+```
+
+Here is an example **Host** configuration:
+
+```
+# fake.cfg
+
+define host{
+    use                     generic-host
+    host_name               fake
+    alias                   FAKE
+    address                 www.example.com
+}
+
+define service{
+    use                             generic-service,graphed-service
+    host_name                       fake
+    service_description             Twitter Followers @wikileaks
+    servicegroups                   twitter_services
+    check_command                   check_twitter_followers_onlydata!wikileaks
+}
+
+define service{
+    use                             generic-service,graphed-service
+    host_name                       fake
+    service_description             Twitter Followers @briankrebs
+    servicegroups                   twitter_services
+    check_command                   check_twitter_followers_below!briankrebs!222000!200000
+}
+```
+
 ## License
 
 Copyright (C) 2018 Christian Mayer <https://fox21.at>
