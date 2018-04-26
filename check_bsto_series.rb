@@ -13,7 +13,7 @@ STATES = ['OK', 'WARNING', 'CRITICAL', 'UNKNOWN']
 @options = {
 	:series_name => nil,
 	:series_season => nil,
-	:warn_episode => nil,
+	:warning_episode => nil,
 	:critical_episode => nil,
 	:lang => 'en',
 	:unknown_state => 3,
@@ -30,8 +30,8 @@ opts = OptionParser.new do |o|
 		@options[:series_season] = season.to_i
 	end
 	
-	o.on('-w', '--warn <episode>', 'Warning Episode') do |episode|
-		@options[:warn_episode] = episode.to_i
+	o.on('-w', '--warning <episode>', 'Warning Episode') do |episode|
+		@options[:warning_episode] = episode.to_i
 	end
 	
 	o.on('-c', '--critical <episode>', 'Critical Episode') do |episode|
@@ -66,7 +66,12 @@ response = Net::HTTP.get(uri)
 # This happens when you enter a season that does not exist (yet).
 not_found_pos = response.index('Staffel nicht gefunden')
 if not not_found_pos.nil?
-	puts '%s -- Season not found' % [STATES[@options[:unknown_state]]]
+	state_name = STATES[@options[:unknown_state]]
+	perf_data = [
+		state_name,
+		@options[:series_name], @options[:warning_episode], @options[:critical_episode],
+	]
+	puts '%s: Season not found | %s=0;%d;%d' % perf_data
 	exit @options[:unknown_state]
 end
 
@@ -122,7 +127,7 @@ episodes.each do |episode|
 			id = eid
 			lang = elang
 			break
-		elsif eid >= @options[:warn_episode]
+		elsif eid >= @options[:warning_episode]
 			state = 1
 			title = etitle
 			id = eid
@@ -139,7 +144,7 @@ episodes.each do |episode|
 				id = eid
 				lang = elang
 				break
-			elsif eid >= @options[:warn_episode]
+			elsif eid >= @options[:warning_episode]
 				state = 1
 				title = etitle
 				id = eid
@@ -158,7 +163,10 @@ end
 
 state_name = STATES[state]
 
-puts '%s -- #%d %s %s|%d;%s;%s;%d;%d' % [state_name, id, lang, title,
-	id, lang, title, @options[:warn_episode], @options[:critical_episode]]
+perf_data = [
+	state_name, id, title, lang,
+	@options[:series_name], id, @options[:warning_episode], @options[:critical_episode],
+]
+puts '%s: #%d %s (%s) | %s=%d;%d;%d' % perf_data
 
 exit state

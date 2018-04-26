@@ -23,12 +23,12 @@ Here is an example **Commands** configuration:
 
 define command{
     command_name    check_bitcoin_price_above
-    command_line    $USER1$/check_bitcoin_price.rb --coin $ARG1$ --fiat $ARG2$ --warn $ARG3$ --critical $ARG4$
+    command_line    $USER1$/check_bitcoin_price.rb --coin $ARG1$ --fiat $ARG2$ -w $ARG3$ -c $ARG4$
 }
 
 define command{
     command_name    check_bitcoin_price_below
-    command_line    $USER1$/check_bitcoin_price.rb --coin $ARG1$ --fiat $ARG2$ --warn $ARG3$ --critical $ARG4$ --below
+    command_line    $USER1$/check_bitcoin_price.rb --coin $ARG1$ --fiat $ARG2$ -w $ARG3$ -c $ARG4$ --below
 }
 ```
 
@@ -134,12 +134,12 @@ define command{
 
 define command{
 	command_name	check_twitter_followers_above
-	command_line	$USER1$/check_twitter_followers.rb -u $ARG1$ --warning $ARG2$ --critical $ARG3$ --above
+	command_line	$USER1$/check_twitter_followers.rb -u $ARG1$ -w $ARG2$ -c $ARG3$ --above
 }
 
 define command{
 	command_name	check_twitter_followers_below
-	command_line	$USER1$/check_twitter_followers.rb -u $ARG1$ --warning $ARG2$ --critical $ARG3$
+	command_line	$USER1$/check_twitter_followers.rb -u $ARG1$ -w $ARG2$ -c $ARG3$
 }
 ```
 

@@ -19,7 +19,7 @@ STATES = ['OK', 'WARNING', 'CRITICAL', 'UNKNOWN']
 	:above => false,
 }
 opts = OptionParser.new do |o|
-	o.banner = 'Usage: --user <nick> --warning <followers> --critical <followers> [--above]'
+	o.banner = 'Usage: --user <nick> -w <followers> -c <followers> [--above]'
 	o.separator('')
 	
 	o.on('-n', '--user <nick>', 'Twitter @Nick') do |nick|
@@ -68,7 +68,7 @@ end
 
 if @options[:critical_followers].nil? && @options[:warning_followers].nil?
 	# Only collect data. Do not compare anything. It's always fine.
-	puts '%d Followers|followers=%d;;;;' % [followers, followers]
+	puts '%d Followers | followers=%d' % [followers, followers]
 	exit 0
 end
 
@@ -88,6 +88,6 @@ end
 
 state_name = STATES[state]
 
-puts '%s -- %d Followers|followers=%d;%d;%d;;' % [state_name, followers, followers, @options[:warning_followers], @options[:critical_followers]]
+puts '%s: %d Followers | followers=%d;%d;%d' % [state_name, followers, followers, @options[:warning_followers], @options[:critical_followers]]
 
 exit state

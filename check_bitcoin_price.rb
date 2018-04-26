@@ -10,6 +10,7 @@ require 'json'
 require 'optparse'
 
 API_BASE_URL = 'https://api.coinmarketcap.com/v1/ticker/%s/?convert=%s'
+STATES = ['OK', 'WARNING', 'CRITICAL', 'UNKNOWN']
 
 @options = {
 	:coin => nil,
@@ -32,7 +33,7 @@ opts = OptionParser.new do |o|
 		@options[:fiat_lower] = @options[:fiat].downcase
 	end
 	
-	o.on('-w', '--warn <price>', 'Warning Price') do |price|
+	o.on('-w', '--warning <price>', 'Warning Price') do |price|
 		@options[:warning_price] = price.to_f
 	end
 	
@@ -76,29 +77,32 @@ else
 	exit 1
 end
 
-exit_code = 0
+state = 0
+additional_name = nil
 if @options[:above]
+	additional_name = 'Price above'
+	
 	if coin_price > @options[:critical_price]
-		print 'PRICE CRITICAL ABOVE'
-		exit_code = 2
+		state = 2
 	elsif coin_price > @options[:warning_price]
-		print 'PRICE WARNING ABOVE'
-		exit_code = 1
-	else
-		print 'PRICE OK ABOVE'
+		state = 1
 	end
 else
+	additional_name = 'Price below'
+	
 	if coin_price < @options[:critical_price]
-		print 'PRICE CRITICAL BELOW'
-		exit_code = 2
+		state = 2
 	elsif coin_price < @options[:warning_price]
-		print 'PRICE WARNING BELOW'
-		exit_code = 1
-	else
-		print 'PRICE OK BELOW'
+		state = 1
 	end
 end
 
-puts ' -- %s %.2f|%s=%.2f;%.2f;%.2f;%s;' % [@options[:fiat], coin_price, @options[:coin], coin_price, @options[:warning_price], @options[:critical_price], @options[:above] ? 'above' : 'below']
+state_name = STATES[state]
 
-exit exit_code
+perf_data = [
+	state_name, additional_name, @options[:coin], @options[:fiat], coin_price, # Normal Output
+	@options[:coin], coin_price, @options[:warning_price], @options[:critical_price],
+]
+puts '%s: %s -- %s = %s %.2f | %s=%.2f;%d;%d' % perf_data
+
+exit state
