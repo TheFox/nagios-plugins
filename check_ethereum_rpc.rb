@@ -34,7 +34,7 @@ STATES = ['OK', 'WARNING', 'CRITICAL', 'UNKNOWN']
 	:above => true,
 }
 opts = OptionParser.new do |o|
-	o.banner = 'Usage: --host <hostname> -w <number> -c <number> [--below] method json_path'
+	o.banner = 'Usage: --host <hostname> --port <number> -w <number> -c <number> [--below] <method> <json_path>'
 	o.separator('')
 	
 	o.on('-H', '--host <hostname>', 'Hostname. Default: localhost') do |hostname|
