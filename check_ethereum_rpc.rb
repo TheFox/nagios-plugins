@@ -1,6 +1,6 @@
 #!/usr/bin/env ruby
 
-require 'pp'
+#require 'pp'
 
 pwarn, pcrit = ARGV
 
@@ -9,13 +9,18 @@ pcrit = pcrit.to_f
 
 percent = %x[/usr/local/bin/geth --exec 'eth.syncing.currentBlock / eth.syncing.highestBlock * 100' attach].to_f
 
+# puts '%f %f' % [pwarn, pcrit]
+
+state = 0
 if percent >= pcrit
-	puts 'CRITICAL %.2f >= %.2f|%.2f' % [percent, pcrit, percent]
-	exit 2
+	print 'CRITICAL'
+	state = 2
 elsif percent >= pwarn
-	puts 'WARNING %.2f => %.2f|%.2f' % [percent, pwarn, percent]
-	exit 1
+	print 'WARNING'
+	state = 1
+else
+	print 'OK'
 end
 
-puts 'OK %.2f|%.2f' % [percent, percent]
-exit 0
+puts ': %.2f | sync=%.2f%%;%.1f;%.1f;0;100' % [percent, percent, pwarn, pcrit]
+exit state
