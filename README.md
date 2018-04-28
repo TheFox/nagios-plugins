@@ -178,6 +178,8 @@ Script: [check_ethereum_rpc.rb](check_ethereum_rpc.rb)
 
 This script lets you check every value provided by the [Ethereum JSON-RPC API](https://github.com/ethereum/wiki/wiki/JSON-RPC).
 
+When you use [go-ethereum](https://github.com/ethereum/go-ethereum) (geth) you have to add `--rpc` to the cli options to activate the RPC.
+
 ![](https://img.fox21.at/public/20180428/nagios_s.png)
 
 ### Usage
