@@ -103,6 +103,6 @@ perf_data = [
 	state_name, additional_name, @options[:coin], @options[:fiat], coin_price, # Normal Output
 	@options[:coin], coin_price, @options[:warning_price], @options[:critical_price],
 ]
-puts '%s: %s -- %s = %s %.2f | %s=%.2f;%d;%d' % perf_data
+puts '%s: %s -- %s = %s %.2f | %s=%.2f;%.2f;%.2f' % perf_data
 
 exit state

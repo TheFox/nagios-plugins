@@ -68,7 +68,12 @@ end
 
 if @options[:critical_followers].nil? && @options[:warning_followers].nil?
 	# Only collect data. Do not compare anything. It's always fine.
-	puts '%d Followers | followers=%d' % [followers, followers]
+	
+	perf_data = [
+		followers,
+		followers, followers,
+	]
+	puts 'OK: %d Followers | followers=%d;;;0;%d' % perf_data
 	exit 0
 end
 
@@ -88,6 +93,10 @@ end
 
 state_name = STATES[state]
 
-puts '%s: %d Followers | followers=%d;%d;%d' % [state_name, followers, followers, @options[:warning_followers], @options[:critical_followers]]
+perf_data = [
+	state_name,	followers,
+	followers, @options[:warning_followers], @options[:critical_followers], followers,
+]
+puts '%s: %d Followers | followers=%d;%d;%d;0;%d' % perf_data
 
 exit state
