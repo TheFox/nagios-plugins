@@ -2,7 +2,7 @@
 
 # Coypright (C) 2018 Christian Mayer <christian@fox21.at>
 
-# Use Coin Market Cap API to get the current coin price.
+# Use the Ethereum JSON-RPC to check numbers.
 
 
 require 'net/http'
