@@ -158,7 +158,7 @@ define host{
 define service{
     use                             generic-service,graphed-service
     host_name                       fake
-    service_description             Twitter Followers @wikileaks
+    service_description             Twitter Followers wikileaks
     servicegroups                   twitter_services
     check_command                   check_twitter_followers_onlydata!wikileaks
 }
@@ -166,9 +166,62 @@ define service{
 define service{
     use                             generic-service,graphed-service
     host_name                       fake
-    service_description             Twitter Followers @briankrebs
+    service_description             Twitter Followers briankrebs
     servicegroups                   twitter_services
     check_command                   check_twitter_followers_below!briankrebs!222000!200000
+}
+```
+
+## Check Ethereum JSON-RPC Nagios Plugin
+
+Script: [check_ethereum_rpc.rb](check_ethereum_rpc.rb)
+
+This script lets you check every value provided by the [Ethereum JSON-RPC API](https://github.com/ethereum/wiki/wiki/JSON-RPC).
+
+![](https://img.fox21.at/public/20180428/nagios_s.png)
+
+### Usage
+
+Here is an example **Commands** configuration:
+
+```
+# commands.cfg
+
+define command{
+	command_name check_ethereum_rpc_above
+	command_line $USER1$/check_ethereum_rpc.rb -H $ARG1$ -p $ARG2$ -w $ARG3$ -c $ARG4$ $ARG5$ $ARG6$
+}
+
+define command{
+	command_name check_ethereum_rpc_below
+	command_line $USER1$/check_ethereum_rpc.rb -H $ARG1$ -p $ARG2$ -w $ARG3$ -c $ARG4$ $ARG5$ $ARG6$
+}
+```
+
+Here is an example **Host** configuration:
+
+```
+# server1.cfg
+
+define host{
+    use                     generic-host
+    host_name               server1
+    alias                   Server1
+    address                 server1.dev
+}
+
+define service{
+    use                             generic-service,graphed-service
+    host_name                       server1
+    service_description             Ethereum Sync 3m
+    check_command                   check_nrpe_ethereum_rpc_above!127.0.0.1!8545!2999999!3000000!eth_syncing!currentBlock
+}
+
+define service{
+    use                             generic-service,graphed-service
+    host_name                       server1
+    service_description             Ethereum Block 6m
+    check_command                   check_nrpe_ethereum_rpc_above!127.0.0.1!8545!5990000!6000000!eth_syncing!highestBlock
 }
 ```
 
