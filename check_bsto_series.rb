@@ -165,8 +165,8 @@ state_name = STATES[state]
 
 perf_data = [
 	state_name, id, title, lang,
-	@options[:series_name], id, @options[:warning_episode], @options[:critical_episode],
+	@options[:series_name], id, @options[:warning_episode], @options[:critical_episode], id,
 ]
-puts '%s: #%d %s (%s) | %s=%d;%d;%d' % perf_data
+puts "%s: #%d %s (%s) | '%s'=%d;%d;%d;0;%d" % perf_data
 
 exit state
