@@ -237,6 +237,8 @@ For example, the full URL to *Family Guy* is <https://www.imdb.com/title/tt01825
 
 ![](https://img.fox21.at/public/20180501/nagios_imdb_s.png)
 
+![](https://img.fox21.at/public/20180501/nagios_imdb_bb_s.png)
+
 ### Usage
 
 Since this plugin doesn't rely on a specific host you can add it to any existing host. Or you can just create a fake host like Google.
