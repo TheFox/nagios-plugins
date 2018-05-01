@@ -100,7 +100,7 @@ rescue Exception => e
 		state_name, path_slug, # Normal Output
 		path_slug, @options[:warning], @options[:critical],
 	]
-	puts '%s: %s=U HTTP REQUEST FAILED | %s=U;%d;%d;0;U' % perf_data
+	puts '%s: HTTP REQUEST FAILED (%s) | %s=U;%d;%d' % perf_data
 	exit state
 end
 
@@ -129,8 +129,8 @@ state_name = STATES[state]
 
 perf_data = [
 	state_name, path_slug, num, # Normal Output
-	path_slug, num, @options[:warning], @options[:critical], num,
+	path_slug, num, @options[:warning], @options[:critical],
 ]
-puts '%s: %s=%d | %s=%d;%d;%d;0;%d' % perf_data
+puts '%s: %s=%d | %s=%d;%d;%d' % perf_data
 
 exit state

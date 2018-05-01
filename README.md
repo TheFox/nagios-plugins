@@ -10,7 +10,7 @@ A plugin for checking the Bitcoin price.
 
 This plugin lets you check every crypto currency listed on [Coin Market Cap](https://coinmarketcap.com/). It uses the [Ticker (Specific Currency) API](https://coinmarketcap.com/api/) to the get the current price of your favourite crypto currency. You can choose every fiat currency listed on Coin Market Cap.
 
-![](https://img.fox21.at/public/20180422/nagios_s.png)
+![](https://img.fox21.at/public/20180501/nagios_btc_s.png)
 
 ### Usage
 
@@ -224,6 +224,51 @@ define service{
     host_name                       server1
     service_description             Ethereum Block 6m
     check_command                   check_nrpe_ethereum_rpc_above!127.0.0.1!8545!5990000!6000000!eth_syncing!highestBlock
+}
+```
+
+## Check IMDb Nagios Plugin
+
+Script: [check_imdb.rb](check_imdb.rb)
+
+This script can be used to check the end of a TV series on [IMDb](https://www.imdb.com/). You either provide the full URL to the IMDb page or only the Title ID.
+
+For example, the full URL to *Family Guy* is <https://www.imdb.com/title/tt0182576/>. The last part of the URL, `tt0182576`, would be the Title ID.
+
+![](https://img.fox21.at/public/20180501/nagios_imdb_s.png)
+
+### Usage
+
+Since this plugin doesn't rely on a specific host you can add it to any existing host. Or you can just create a fake host like Google.
+
+Here is an example **Commands** configuration:
+
+```
+# commands.cfg
+
+define command{
+	command_name	check_imdb_series
+	command_line	$USER1$/check_imdb.rb --title $ARG1$ --series
+}
+```
+
+Here is an example **Host** configuration:
+
+```
+# fake.cfg
+
+define host{
+    use                     generic-host
+    host_name               fake
+    alias                   FAKE
+    address                 www.example.com
+}
+
+define service{
+    use                             generic-service
+    host_name                       fake
+    service_description             Family Guy
+    check_command                   check_imdb_series!tt0182576
 }
 ```
 
