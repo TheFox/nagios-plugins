@@ -34,7 +34,7 @@ STATES = ['OK', 'WARNING', 'CRITICAL', 'UNKNOWN']
 	:above => true,
 }
 opts = OptionParser.new do |o|
-	o.banner = 'Usage: --host <hostname> --port <number> -w <number> -c <number> [--below] <method> <json_path>'
+	o.banner = 'Usage: --host <hostname> --port <number> -w <number> -c <number> [--above|--below] <method> <json_path>'
 	o.separator('')
 	
 	o.on('-H', '--host <hostname>', 'Hostname. Default: localhost') do |hostname|
@@ -53,7 +53,11 @@ opts = OptionParser.new do |o|
 		@options[:critical] = num.to_i
 	end
 	
-	o.on('-b', '--below', 'Return OK when price is below. Default: false') do
+	o.on('-a', '--above', 'Return OK when number is above. (default)') do
+		@options[:above] = true
+	end
+	
+	o.on('-b', '--below', 'Return OK when number is below.') do
 		@options[:above] = false
 	end
 	

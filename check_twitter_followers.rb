@@ -19,7 +19,7 @@ STATES = ['OK', 'WARNING', 'CRITICAL', 'UNKNOWN']
 	:above => false,
 }
 opts = OptionParser.new do |o|
-	o.banner = 'Usage: --user <nick> -w <followers> -c <followers> [--above]'
+	o.banner = 'Usage: --user <nick> -w <followers> -c <followers> [--above|--below]'
 	o.separator('')
 	
 	o.on('-n', '--user <nick>', 'Twitter @Nick') do |nick|
@@ -34,8 +34,12 @@ opts = OptionParser.new do |o|
 		@options[:critical_followers] = followers.to_i
 	end
 	
-	o.on('-a', '--above', 'Return OK when followers are below. Default: false') do
+	o.on('-a', '--above', 'Return OK when followers are above.') do
 		@options[:above] = true
+	end
+	
+	o.on('-b', '--below', 'Return OK when followers are below. (default)') do
+		@options[:above] = false
 	end
 	
 	o.on_tail('-h', '--help', 'Show this message.') do

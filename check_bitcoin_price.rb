@@ -21,7 +21,7 @@ STATES = ['OK', 'WARNING', 'CRITICAL', 'UNKNOWN']
 	:above => true,
 }
 opts = OptionParser.new do |o|
-	o.banner = 'Usage: --coin <id> --fiat <name> -w <price> -c <price> [--below]'
+	o.banner = 'Usage: --coin <id> --fiat <name> -w <price> -c <price> [--above|--below]'
 	o.separator('')
 	
 	o.on('-n', '--coin <id>', 'Coin ID') do |coin|
@@ -41,7 +41,11 @@ opts = OptionParser.new do |o|
 		@options[:critical_price] = price.to_f
 	end
 	
-	o.on('-b', '--below', 'Return OK when price is below. Default: false') do
+	o.on('-a', '--above', 'Return OK when price is above. (default)') do
+		@options[:above] = true
+	end
+	
+	o.on('-b', '--below', 'Return OK when price is below.') do
 		@options[:above] = false
 	end
 	
