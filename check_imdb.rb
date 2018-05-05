@@ -65,17 +65,25 @@ msg = 'N/A'
 
 begin
 	if @options[:is_series]
-		regex = Regexp.new(/<meta property='og:title' content="(.{1,30}) .TV Series/)
+		regex = /<meta property='og:title' content="(.{1,30}) .TV Series/
 		names = response.scan(regex)
 		if names.nil? || names.length == 0 || names.first.nil? || names.first.length == 0
-			raise ImdbError.new('No Name (og:title) found')
+			
+			regex = /<title>(.{1,32}) \(\d{4}\) . IMDb<.title>/
+			titles = response.scan(regex)
+			if titles.nil? || titles.length == 0 || titles.first.nil? || titles.first.length == 0
+				raise ImdbError.new('No Name found')
+			else
+				name = titles.first.first
+			end
+		else
+			name = names.first.first
 		end
-		name = names.first.first
 
-		regex = Regexp.new(/>TV Series \((\d{4})[^0-9]{1,3}(\d{0,4})/)
+		regex = />TV Series \((\d{4})[^0-9]{1,3}(\d{0,4})/
 		dates = response.scan(regex)
 		if dates.nil? || dates.length == 0 || dates.first.nil? || dates.first.length == 0
-			raise ImdbError.new('No Year found for "%s"' % [name])
+			raise ImdbError.new('No series: "%s"' % [name])
 		end
 		inner = dates.shift
 		begin_year, end_year = inner.map{ |s| s.to_i }
