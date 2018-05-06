@@ -111,6 +111,17 @@ end
 # Parse JSON response to get Hash array.
 json_response = JSON.parse(response.body)
 
+if !json_response.has_key?('result') || !json_response['result']
+	state = 3
+	state_name = STATES[state]
+	perf_data = [
+		state_name, path_slug, # Normal Output
+		path_slug, @options[:warning], @options[:critical],
+	]
+	puts '%s: NO RESULT (%s) | %s=U;%d;%d' % perf_data
+	exit state
+end
+
 result = json_response['result']
 
 num = json_path(result, paths)
