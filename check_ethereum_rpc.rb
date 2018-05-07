@@ -32,6 +32,7 @@ STATES = ['OK', 'WARNING', 'CRITICAL', 'UNKNOWN']
 	:warning => nil,
 	:critical => nil,
 	:above => true,
+	:unknown_state => 3,
 }
 opts = OptionParser.new do |o|
 	o.banner = 'Usage: --host <hostname> --port <number> -w <number> -c <number> [--above|--below] <method> <json_path>'
@@ -59,6 +60,10 @@ opts = OptionParser.new do |o|
 	
 	o.on('-b', '--below', 'Return OK when number is below.') do
 		@options[:above] = false
+	end
+	
+	o.on('-u', '--unknown <int>', 'Treat UNKNOWN state with different status code. Default: 3') do |state|
+		@options[:unknown_state] = state.to_i
 	end
 	
 	o.on_tail('-h', '--help', 'Show this message.') do
@@ -112,7 +117,7 @@ end
 json_response = JSON.parse(response.body)
 
 if !json_response.has_key?('result') || !json_response['result']
-	state = 3
+	state = @options[:unknown_state]
 	state_name = STATES[state]
 	perf_data = [
 		state_name, path_slug, # Normal Output
