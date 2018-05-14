@@ -69,10 +69,12 @@ not_found_pos = response.index('Staffel nicht gefunden')
 if not not_found_pos.nil?
 	state_name = STATES[@options[:unknown_state]]
 	perf_data = [
-		state_name,
-		@options[:series_name], @options[:warning_episode], @options[:critical_episode],
+		state_name, @options[:series_season],
+		@options[:series_name],
+		@options[:series_season], @options[:warning_episode],
+		@options[:series_season], @options[:critical_episode],
 	]
-	puts '%s: Season not found | %s=U;%d;%d' % perf_data
+	puts '%s: Season %d not found | %s=U;%d%03d;%d%03d' % perf_data
 	exit @options[:unknown_state]
 end
 
@@ -165,9 +167,11 @@ end
 state_name = STATES[state]
 
 perf_data = [
-	state_name, id, title, lang, # Normal Output
-	@options[:series_name].downcase, id, @options[:warning_episode], @options[:critical_episode],
+	state_name, id, title, @options[:series_season], lang, # Normal Output
+	@options[:series_name].downcase, id,
+	@options[:series_season], @options[:warning_episode],
+	@options[:series_season], @options[:critical_episode],
 ]
-puts "%s: #%d %s (%s) | '%s'=%d;%d;%d" % perf_data
+puts "%s: #%d %s (s=%d,l=%s) | '%s'=%d;%d%03d;%d%03d" % perf_data
 
 exit state
