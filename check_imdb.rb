@@ -8,7 +8,8 @@
 require 'net/http'
 require 'json'
 require 'optparse'
-require 'pp'
+require 'cgi'
+#require 'pp'
 
 class ImdbError < RuntimeError
 	attr_reader :state
@@ -65,16 +66,16 @@ msg = 'N/A'
 
 begin
 	if @options[:is_series]
-		regex = /<meta property='og:title' content="(.{1,30}) .TV Series/
+		regex = /<meta property='og:title' content="(.{1,40}) \(/
 		names = response.scan(regex)
 		if names.nil? || names.length == 0 || names.first.nil? || names.first.length == 0
 			
-			regex = /<title>(.{1,32}) \(\d{4}\) . IMDb<.title>/
+			regex = /<title>(.{1,40}) \(/
 			titles = response.scan(regex)
 			if titles.nil? || titles.length == 0 || titles.first.nil? || titles.first.length == 0
-				raise ImdbError.new('No Name found')
+				raise ImdbError.new('No Name found (<title>)')
 			else
-				name = titles.first.first
+				name = CGI.unescapeHTML(titles.first.first)
 			end
 		else
 			name = names.first.first
