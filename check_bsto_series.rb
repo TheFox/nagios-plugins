@@ -70,11 +70,11 @@ if not not_found_pos.nil?
 	state_name = STATES[@options[:unknown_state]]
 	perf_data = [
 		state_name, @options[:series_season],
-		@options[:series_name],
+		@options[:series_name].downcase,
 		@options[:series_season], @options[:warning_episode],
 		@options[:series_season], @options[:critical_episode],
 	]
-	puts '%s: Season %d not found | %s=U;%d%03d;%d%03d' % perf_data
+	puts "%s: Season %d not found | '%s'=U;%d%03d;%d%03d" % perf_data
 	exit @options[:unknown_state]
 end
 
