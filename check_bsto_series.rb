@@ -6,6 +6,7 @@
 require 'net/http'
 require 'json'
 require 'optparse'
+require 'cgi'
 
 API_BASE_URL = 'https://bs.to/serie/%s/%d'
 STATES = ['OK', 'WARNING', 'CRITICAL', 'UNKNOWN']
@@ -111,9 +112,9 @@ elang = nil
 episodes.each do |episode|
 	etitle, eid, etag = episode
 	
-	etitle = etitle
+	etitle = CGI.unescapeHTML(etitle)
 		.strip
-		.gsub(/[^ \-A-Za-z0-9]/, '')
+		.gsub(/[^ \-A-Za-z0-9']/, '')
 	eid = eid.to_i
 	elang = etag == 't' ? 'de' : 'en'
 	
