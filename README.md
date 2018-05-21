@@ -14,7 +14,7 @@ This plugin lets you check every crypto currency listed on [Coin Market Cap](htt
 
 ### Usage
 
-Since this plugin doesn't rely on a specific host you can add it to any existing host. Or you can just create a fake host like Google.
+Since this plugin doesn't rely on a specific host you can add it to any existing host. Or you can just create a fake host like example.com.
 
 Here is an example **Commands** configuration:
 
@@ -71,7 +71,7 @@ This plugin let you set a notifcation about new episodes on Burning Series for e
 
 ### Usage
 
-Since this plugin doesn't rely on a specific host you can add it to any existing host. Or you can just create a fake host like Google.
+Since this plugin doesn't rely on a specific host you can add it to any existing host. Or you can just create a fake host like example.com.
 
 Here is an example **Commands** configuration:
 
@@ -241,7 +241,7 @@ For example, the full URL to *Family Guy* is <https://www.imdb.com/title/tt01825
 
 ### Usage
 
-Since this plugin doesn't rely on a specific host you can add it to any existing host. Or you can just create a fake host like Google.
+Since this plugin doesn't rely on a specific host you can add it to any existing host. Or you can just create a fake host like example.com.
 
 Here is an example **Commands** configuration:
 
@@ -271,6 +271,47 @@ define service{
     host_name                       fake
     service_description             Family Guy
     check_command                   check_imdb_series!tt0182576
+}
+```
+
+## Check GitHub Release Nagios Plugin
+
+Script: [check_github_release.rb](check_github_release.rb)
+
+This script can be used to check a release of a GitHub Repository.
+
+## Usage
+
+Since this plugin doesn't rely on a specific host you can add it to any existing host. Or you can just create a fake host like example.com.
+
+Here is an example **Commands** configuration:
+
+```
+# commands.cfg
+
+define command{
+	command_name	check_github_release
+	command_line	$USER1$/check_github_release.rb --name $ARG1$ -w $ARG2$ -c $ARG3$
+}
+```
+
+Here is an example **Host** configuration:
+
+```
+# fake.cfg
+
+define host{
+    use                     generic-host
+    host_name               fake
+    alias                   FAKE
+    address                 www.example.com
+}
+
+define service{
+    use                             generic-service
+    host_name                       fake
+    service_description             GitHub: ethereum/go-ethereum
+    check_command                   check_github_release!1.8.9!1.9
 }
 ```
 
