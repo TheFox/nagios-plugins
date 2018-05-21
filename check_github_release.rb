@@ -32,6 +32,8 @@ STATES = ['OK', 'WARNING', 'CRITICAL', 'UNKNOWN']
 	:warning => Gem::Version.new('0.0.0'),
 	:critical => Gem::Version.new('0.0.0'),
 	# :release => false,
+	:cmd => nil,
+	:cmdregexp => nil,
 }
 opts = OptionParser.new do |o|
 	o.banner = 'Usage: --name <user/repo> -w <number> -c <number>'
@@ -52,6 +54,15 @@ opts = OptionParser.new do |o|
 	# o.on('-c', '--release', 'Releases Only') do
 	# 	@options[:release] = true
 	# end
+	
+	o.on('--cmd <string>', 'Run command to check version.') do |cmd|
+		@options[:cmd] = cmd
+	end
+	
+	o.on('--cmdregexp <string>', 'RegExp to catch command output.') do |cmdregexp|
+		# puts "regexp: '#{cmdregexp}'"
+		@options[:cmdregexp] = Regexp.new(cmdregexp)
+	end
 	
 	o.on_tail('-h', '--help', 'Show this message.') do
 		puts o
@@ -83,19 +94,44 @@ open(url) do |rss|
 	end
 end
 
-state = 0
-if latest_version >= @options[:critical]
-	state = 2
-elsif latest_version >= @options[:warning]
-	state = 1
+state = 3
+
+if @options[:cmd].nil?
+	if latest_version >= @options[:critical]
+		state = 2
+	elsif latest_version >= @options[:warning]
+		state = 1
+	else
+		state = 0
+	end
+else
+	require 'open3'
+	stdout, stderr, status = Open3.capture3(@options[:cmd])
+	
+	if 0 == status.exitstatus
+		res = @options[:cmdregexp].match(stdout)
+		
+		# pp res
+		
+		@options[:critical] = Gem::Version.new(res[1])
+		
+		# pp @options[:critical]
+		# pp latest_version
+		
+		if latest_version > @options[:critical]
+			state = 2
+		else
+			state = 0
+		end
+	end
 end
 
 state_name = STATES[state]
 
 perf_data = [
-	state_name, @options[:name], latest_version, # Normal Output
+	state_name, @options[:name], latest_version, @options[:warning], @options[:critical], # Normal Output
 	# @options[:name], latest_version.to_i, @options[:warning].to_i, @options[:critical].to_i,
 ]
-puts "%s: %s=%s" % perf_data
+puts "%s: %s=%s (w=%s c=%s)" % perf_data
 
 exit state

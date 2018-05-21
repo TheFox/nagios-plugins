@@ -278,7 +278,7 @@ define service{
 
 Script: [check_github_release.rb](check_github_release.rb)
 
-This script can be used to check a release of a GitHub Repository.
+This script can be used to check a release of a GitHub Repository. You can either choose a specific version, or dynamic. When checking the version dynamically you specify a command (`--cmd`) and a [regular expression](https://en.wikipedia.org/wiki/Regular_expression) (`--cmdregexp`) to read the current version from the installed software.
 
 ## Usage
 
@@ -290,8 +290,13 @@ Here is an example **Commands** configuration:
 # commands.cfg
 
 define command{
-	command_name	check_github_release
+	command_name	check_github_release_fix
 	command_line	$USER1$/check_github_release.rb --name $ARG1$ -w $ARG2$ -c $ARG3$
+}
+
+define command{
+	command_name	check_github_release_cmd
+	command_line	$USER1$/check_github_release.rb --name $ARG1$ --cmd '$ARG2$' --cmdregexp '$ARG3$'
 }
 ```
 
@@ -311,7 +316,14 @@ define service{
     use                             generic-service
     host_name                       fake
     service_description             GitHub: ethereum/go-ethereum
-    check_command                   check_github_release!ethereum/go-ethereum!1.8.9!1.9
+    check_command                   check_github_release_fix!ethereum/go-ethereum!1.8.9!1.9
+}
+
+define service{
+    use                             generic-service
+    host_name                       fake
+    service_description             GitHub: ethereum/go-ethereum
+    check_command                   check_github_release_cmd!ethereum/go-ethereum!geth version!^Version: (\d{1,3}\.\d{1,3}\.\d{1,3})
 }
 ```
 
