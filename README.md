@@ -311,7 +311,7 @@ define service{
     use                             generic-service
     host_name                       fake
     service_description             GitHub: ethereum/go-ethereum
-    check_command                   check_github_release!1.8.9!1.9
+    check_command                   check_github_release!ethereum/go-ethereum!1.8.9!1.9
 }
 ```
 
