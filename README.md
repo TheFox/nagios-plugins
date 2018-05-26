@@ -327,6 +327,41 @@ define service{
 }
 ```
 
+## Check File Type Nagios Plugin
+
+### Usage
+
+Here is an example **Commands** configuration:
+
+```
+# commands.cfg
+
+define command{
+	command_name	check_file_type
+	command_line	$USER1$/check_file_type.rb --file $ARG1$ --regexp $ARG2$
+}
+```
+
+Here is an example **Host** configuration:
+
+```
+# localhost.cfg
+
+define host{
+    use                     generic-host
+    host_name               localhost
+    alias                   Localhost
+    address                 localhost
+}
+
+define service{
+    use                             generic-service
+    host_name                       localhost
+    service_description             File Type: /tmp/test.txt
+    check_command                   check_file_type!/tmp/test.txt!ASCII
+}
+```
+
 ## License
 
 Copyright (C) 2018 Christian Mayer <https://fox21.at>

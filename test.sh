@@ -5,3 +5,7 @@
 
 ./check_bsto_series.rb -n Mr-Robot -s 3 -w 1 -c 2 -l de
 ./check_bsto_series.rb -n Mr-Robot -s 40 -w 1 -c 2 -l de
+
+./check_file_type.rb -f ./test.sh -r ASCII
+./check_file_type.rb -f ./test.sh -r ASCIX
+./check_file_type.rb -f ./not_found -r ASCIX -i
