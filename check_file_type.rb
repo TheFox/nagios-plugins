@@ -16,7 +16,6 @@ STATES = ['OK', 'WARNING', 'CRITICAL', 'UNKNOWN']
 
 @options = {
 	:file => nil,
-	:file_pn => nil,
 	:regexp => nil,
 	:ignore_missing => false,
 }
@@ -25,8 +24,7 @@ opts = OptionParser.new do |o|
 	o.separator('')
 	
 	o.on('-f', '--file <path>', 'File Path') do |file|
-		@options[:file] = file
-		@options[:file_pn] = Pathname.new(file).expand_path
+		@options[:file] = Pathname.new(file).expand_path
 	end
 	
 	o.on('-r', '--regexp <string>', 'RegExp String') do |regexp|
@@ -46,8 +44,8 @@ end
 ARGV << '-h' if ARGV.count == 0
 commands = opts.parse(ARGV)
 
-if @options[:file_pn].exist?
-	cmd = 'file -b %s' % [@options[:file]]
+if @options[:file].exist?
+	cmd = 'file -b %s' % [@options[:file].to_s]
 
 	stdout, stderr, status = Open3.capture3(cmd)
 
@@ -59,13 +57,13 @@ if @options[:file_pn].exist?
 	
 	sformat = '%s: %s -- %s'
 	perf_data = [
-		STATES[state], @options[:file], stdout,
+		STATES[state], @options[:file].to_s, stdout,
 	]
 else
 	state = @options[:ignore_missing] ? 0 : 2
 	sformat = '%s: %s file not found'
 	perf_data = [
-		STATES[state], @options[:file],
+		STATES[state], @options[:file].to_s,
 	]
 end
 

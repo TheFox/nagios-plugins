@@ -379,6 +379,8 @@ define service{
 
 ## Check File Type Nagios Plugin
 
+![](https://img.fox21.at/public/20180531/nagios_20180531_125102_s.png)
+
 ### Usage
 
 Here is an example **Commands** configuration:
