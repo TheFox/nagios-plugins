@@ -9,3 +9,5 @@
 ./check_file_type.rb -f ./test.sh -r ASCII
 ./check_file_type.rb -f ./test.sh -r ASCIX
 ./check_file_type.rb -f ./not_found -r ASCIX -i
+
+./check_git_commit_age.rb -r git@github.com:ansible/ansible.git -d /tmp/ansible -w 86400 -c 172800

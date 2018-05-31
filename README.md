@@ -274,6 +274,52 @@ define service{
 }
 ```
 
+## Check Git Commit Age Nagios Plugin
+
+Script: [check_git_commit_age.rb](check_git_commit_age.rb)
+
+This script can be used to check the age of the last commit of a specific Git repository. Sometimes you are not always aware when your favourite Software project gets abandoned. This Nagios plugin can you help to get notified when the last commit of a certain Git repository reaches a specific age.
+
+## Usage
+
+Since this plugin doesn't rely on a specific host you can add it to any existing host. Or you can just create a fake host like example.com.
+
+```
+# commands.cfg
+
+define command{
+	command_name	check_git_commit_age
+	command_line	$USER1$/check_git_commit_age.rb --repository $ARG1$ --destination $ARG2$ -w $ARG3$ -c $ARG4$
+}
+```
+
+Here is an example **Host** configuration:
+
+```
+# fake.cfg
+
+define host{
+    use                     generic-host
+    host_name               fake
+    alias                   FAKE
+    address                 www.example.com
+}
+
+define service{
+    use                             generic-service
+    host_name                       fake
+    service_description             Git Commit Age: ethereum/go-ethereum
+    check_command                   check_git_commit_age!git@github.com:ethereum/go-ethereum.git!/tmp/geth!86400!172800
+}
+
+define service{
+    use                             generic-service
+    host_name                       fake
+    service_description             Git Commit Age: ansible
+    check_command                   check_git_commit_age!git@github.com:ansible/ansible.git!/tmp/ansible!86400!172800
+}
+```
+
 ## Check GitHub Release Nagios Plugin
 
 Script: [check_github_release.rb](check_github_release.rb)
