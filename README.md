@@ -280,6 +280,8 @@ Script: [check_git_commit_age.rb](check_git_commit_age.rb)
 
 This script can be used to check the age of the last commit of a specific Git repository. Sometimes you are not always aware when your favourite Software project gets abandoned. This Nagios plugin can you help to get notified when the last commit of a certain Git repository reaches a specific age.
 
+![](https://img.fox21.at/public/20180531/nagios_20180531_120958_s.png)
+
 ## Usage
 
 Since this plugin doesn't rely on a specific host you can add it to any existing host. Or you can just create a fake host like example.com.
@@ -309,14 +311,14 @@ define service{
     use                             generic-service
     host_name                       fake
     service_description             Git Commit Age: ethereum/go-ethereum
-    check_command                   check_git_commit_age!git@github.com:ethereum/go-ethereum.git!/tmp/geth!86400!172800
+    check_command                   check_git_commit_age!https://github.com/ethereum/go-ethereum.git!/tmp/geth!86400!172800
 }
 
 define service{
     use                             generic-service
     host_name                       fake
     service_description             Git Commit Age: ansible
-    check_command                   check_git_commit_age!git@github.com:ansible/ansible.git!/tmp/ansible!86400!172800
+    check_command                   check_git_commit_age!https://github.com/ansible/ansible.git!/tmp/ansible!86400!172800
 }
 ```
 
@@ -325,6 +327,8 @@ define service{
 Script: [check_github_release.rb](check_github_release.rb)
 
 This script can be used to check a release of a GitHub Repository. You can either choose a specific version, or dynamic. When checking the version dynamically you specify a command (`--cmd`) and a [regular expression](https://en.wikipedia.org/wiki/Regular_expression) (`--cmdregexp`) to read the current version from the installed software.
+
+![](https://img.fox21.at/public/20180531/nagios_20180531_121323_s.png)
 
 ## Usage
 
