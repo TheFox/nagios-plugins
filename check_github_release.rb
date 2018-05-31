@@ -86,8 +86,6 @@ open(url) do |rss|
 		version_items = item.id.content.split('/')
 		version = Gem::Version.new(version_items.last.gsub(/^v\.?/, ''))
 		
-		# puts ' -> %s %s' % [version, version.to_i]
-		
 		if version > latest_version
 			latest_version = version
 		end
@@ -111,12 +109,7 @@ else
 	if 0 == status.exitstatus
 		res = @options[:cmdregexp].match(stdout)
 		
-		# pp res
-		
 		@options[:critical] = Gem::Version.new(res[1])
-		
-		# pp @options[:critical]
-		# pp latest_version
 		
 		if latest_version > @options[:critical]
 			state = 2
@@ -130,7 +123,6 @@ state_name = STATES[state]
 
 perf_data = [
 	state_name, @options[:name], latest_version, @options[:warning], @options[:critical], # Normal Output
-	# @options[:name], latest_version.to_i, @options[:warning].to_i, @options[:critical].to_i,
 ]
 puts "%s: %s=%s (w=%s c=%s)" % perf_data
 
