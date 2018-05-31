@@ -79,6 +79,6 @@ perf_data = [
 	state_name, diff, @options[:warning], @options[:critical], # Normal Output
 	diff, @options[:warning], @options[:critical],
 ]
-puts "%s: diff=%d (w=%d c=%d) | diff=%d;%d;%d" % perf_data
+puts "%s: diff=%ds (w=%ds c=%ds) | diff=%ds;%d;%d" % perf_data
 
 exit state
