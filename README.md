@@ -311,16 +311,26 @@ define service{
     use                             generic-service
     host_name                       fake
     service_description             Git Commit Age: ethereum/go-ethereum
-    check_command                   check_git_commit_age!https://github.com/ethereum/go-ethereum.git!/tmp/geth!86400!172800
+    check_command                   check_git_commit_age!https://github.com/ethereum/go-ethereum.git!/tmp/geth!1d!2d
 }
 
 define service{
     use                             generic-service
     host_name                       fake
     service_description             Git Commit Age: ansible
-    check_command                   check_git_commit_age!https://github.com/ansible/ansible.git!/tmp/ansible!86400!172800
+    check_command                   check_git_commit_age!https://github.com/ansible/ansible.git!/tmp/ansible!1d!2d
 }
 ```
+
+Time string examples:
+
+- `3y` = 3 Years
+- `2w` = 2 Weeks
+- `1d` = 1 Day
+- `23h` = 23 Hours
+- `5m` = 5 Minutes
+- `230s` = 230 Seconds
+- `250` = 250 Seconds
 
 ## Check GitHub Release Nagios Plugin
 
