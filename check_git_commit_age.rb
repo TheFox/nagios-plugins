@@ -24,35 +24,71 @@ end
 def convert_human_time(time_s)
 	time_s = time_s.strip.gsub(/ /, '')
 	
-	s = 0
-	if res = /^(\d{1,11})$/.match(time_s)
-		# Seconds
-		s = res[1].to_i
-	elsif res = /^(\d{1,11})s$/.match(time_s)
-		# Seconds
-		s = res[1].to_i
-	elsif res = /^(\d{1,10})m$/.match(time_s)
-		# Minutes
-		s = res[1].to_i * 60
-	elsif res = /^(\d{1,6})h$/.match(time_s)
-		# Hours
-		s = res[1].to_i * 3600
-	elsif res = /^(\d{1,4})d$/.match(time_s)
-		# Days
-		s = res[1].to_i * 24 * 3600
-	elsif res = /^(\d{1,4})w$/.match(time_s)
-		# Weeks
-		s = res[1].to_i * 7 * 24 * 3600
-	elsif res = /^(\d{1,3})M$/.match(time_s)
-		# Months
-		s = res[1].to_i * 30.41 * 24 * 3600
-	elsif res = /^(\d{1,2})y$/.match(time_s)
-		# Years
-		s = res[1].to_i * 365 * 24 * 3600
-	else
+	res = /^(\d{1,11})(.?)$/.match(time_s)
+	
+	n = res[1].to_i
+	h = {
+		''  => n,
+		's' => n,
+		'm' => n * 60,
+		'h' => n * 3600,
+		'd' => n * 24 * 3600,
+		'w' => n * 7 * 24 * 3600,
+		'M' => n * 30.41 * 24 * 3600,
+		'y' => n * 365 * 24 * 3600,
+	}
+	
+	if not h.has_key?(res[2])
 		raise 'Invalid time string: %s' % [time_s]
 	end
-	s.to_i
+	
+	h[res[2]].to_i
+end
+
+def convert_computer_time(s)
+	h = {
+		'y' => 365 * 24 * 3600,
+		'M' => 30.41 * 24 * 3600,
+		'w' => 7 * 24 * 3600,
+		'd' => 24 * 3600,
+		'h' => 3600,
+		'm' => 60,
+	}
+	
+	prefix = ''
+	if s < 0
+		prefix = '-'
+		s = s.abs
+	end
+	
+	x = Hash.new
+	h.each do |y, n|
+		m = 0
+		while s >= n && s >= 60 && m <= 1000
+			m += 1
+			
+			if not x.has_key?(y)
+				x[y] = 0
+			end
+			x[y] += 1
+			
+			s -= n
+			
+			if s < 60
+				break
+			end
+		end
+	end
+	if s > 0 || x.keys.length == 0
+		x['s'] = s
+	end
+	
+	(
+		'%s%s' % [
+			prefix,
+			x.map{ |k| '%s%s' % k.reverse }.join(''),
+		]
+	).strip
 end
 
 @options = {
@@ -60,8 +96,10 @@ end
 	:dst => nil,
 	:git_data => nil,
 	:git_pull_file => nil,
-	:warning => 3600,
-	:critical => 7200,
+	:warning_n => 3600,
+	:warning_s => '1h',
+	:critical_n => 7200,
+	:critical_s => '2h',
 	:pull_timeout => nil,
 }
 opts = OptionParser.new do |o|
@@ -79,14 +117,16 @@ opts = OptionParser.new do |o|
 	end
 	
 	o.on('-w', '--warning <time>', 'Warning (For example: 1h)') do |time|
-		@options[:warning] = convert_human_time(time)
+		@options[:warning_n] = convert_human_time(time)
+		@options[:warning_s] = time
 	end
 	
 	o.on('-c', '--critical <time>', 'Critical (For example: 3h)') do |time|
-		@options[:critical] = convert_human_time(time)
+		@options[:critical_n] = convert_human_time(time)
+		@options[:critical_s] = time
 	end
 	
-	o.on('--pull-timeout <time>', 'Time between pulls') do |time|
+	o.on('-p', '--pull-timeout <time>', 'Time between pulls') do |time|
 		@options[:pull_timeout] = convert_human_time(time)
 	end
 	
@@ -139,9 +179,9 @@ Dir.chdir(@options[:dst]) do
 	end
 end
 
-if diff >= @options[:critical]
+if diff >= @options[:critical_n]
 	state = 2
-elsif diff >= @options[:warning]
+elsif diff >= @options[:warning_n]
 	state = 1
 else
 	state = 0
@@ -150,9 +190,9 @@ end
 state_name = STATES[state]
 
 perf_data = [
-	state_name, diff, @options[:warning], @options[:critical], next_pull, git_pull ? 'Y' : 'N', # Normal Output
-	diff, @options[:warning], @options[:critical],
+	state_name, diff, @options[:warning_s], @options[:critical_s], convert_computer_time(next_pull), git_pull ? 'Y' : 'N', # Normal Output
+	diff, @options[:warning_n], @options[:critical_n],
 ]
-puts "%s: diff=%ds (w=%ds c=%ds n=%ds p?=%s) | diff=%ds;%d;%d" % perf_data
+puts "%s: diff=%ds w=%s c=%s n=%s p?=%s | diff=%ds;%d;%s" % perf_data
 
 exit state
