@@ -325,6 +325,7 @@ define service{
 Time string examples:
 
 - `3y` = 3 Years
+- `1M` = 1 Month
 - `2w` = 2 Weeks
 - `1d` = 1 Day
 - `23h` = 23 Hours

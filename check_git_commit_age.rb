@@ -44,6 +44,9 @@ def convert_human_time(time_s)
 	elsif res = /^(\d{1,4})w$/.match(time_s)
 		# Weeks
 		s = res[1].to_i * 7 * 24 * 3600
+	elsif res = /^(\d{1,3})M$/.match(time_s)
+		# Months
+		s = res[1].to_i * 30.41 * 24 * 3600
 	elsif res = /^(\d{1,2})y$/.match(time_s)
 		# Years
 		s = res[1].to_i * 365 * 24 * 3600
