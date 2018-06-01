@@ -10,7 +10,6 @@ require 'json'
 require 'optparse'
 require 'open3'
 require 'pathname'
-# require 'pp'
 
 STATES = ['OK', 'WARNING', 'CRITICAL', 'UNKNOWN']
 

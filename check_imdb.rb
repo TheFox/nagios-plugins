@@ -9,7 +9,6 @@ require 'net/http'
 require 'json'
 require 'optparse'
 require 'cgi'
-#require 'pp'
 
 class ImdbError < RuntimeError
 	attr_reader :state

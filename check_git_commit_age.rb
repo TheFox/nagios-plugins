@@ -8,7 +8,6 @@
 require 'optparse'
 require 'pathname'
 require 'time'
-require 'pp'
 
 STATES = ['OK', 'WARNING', 'CRITICAL', 'UNKNOWN']
 

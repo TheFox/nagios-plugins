@@ -8,7 +8,6 @@
 require 'rss'
 require 'optparse'
 require 'rubygems'
-require 'pp'
 
 # module Gem
 # 	class Version
