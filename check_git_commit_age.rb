@@ -152,7 +152,8 @@ if not @options[:git_data].exist?
 	write_file(@options[:git_pull_file])
 end
 
-diff = 0
+diff_n = 0
+diff_s = 'N/A'
 next_pull = 0 # Pull always.
 git_pull = false
 Dir.chdir(@options[:dst]) do
@@ -175,13 +176,14 @@ Dir.chdir(@options[:dst]) do
 		uts = `git log -n 1 --pretty=format:%at`.to_i
 		
 		# Calc diff
-		diff = Time.now.to_i - uts
+		diff_n = Time.now.to_i - uts
+		diff_s = convert_computer_time(diff_n)
 	end
 end
 
-if diff >= @options[:critical_n]
+if diff_n >= @options[:critical_n]
 	state = 2
-elsif diff >= @options[:warning_n]
+elsif diff_n >= @options[:warning_n]
 	state = 1
 else
 	state = 0
@@ -190,9 +192,9 @@ end
 state_name = STATES[state]
 
 perf_data = [
-	state_name, diff, @options[:warning_s], @options[:critical_s], convert_computer_time(next_pull), git_pull ? 'Y' : 'N', # Normal Output
-	diff, @options[:warning_n], @options[:critical_n],
+	state_name, diff_s, @options[:warning_s], @options[:critical_s], convert_computer_time(next_pull), git_pull ? 'Y' : 'N', # Normal Output
+	diff_n, @options[:warning_n], @options[:critical_n],
 ]
-puts "%s: diff=%ds w=%s c=%s n=%s p?=%s | diff=%ds;%d;%s" % perf_data
+puts "%s: diff=%s w=%s c=%s n=%s p?=%s | diff=%ds;%d;%s" % perf_data
 
 exit state
