@@ -2,27 +2,13 @@
 
 # Coypright (C) 2018 Christian Mayer <christian@fox21.at>
 
-# Check a release number of a GitHub repo.
+# Check a release number of a RubyGems repo.
 
 
 require 'rss'
 require 'optparse'
 require 'rubygems'
-
-# module Gem
-# 	class Version
-# 		def to_i
-# 			items = self.version.split('.').map{ |s| s.to_i }.reverse
-# 			n = 0
-# 			e = 0
-# 			items.each do |i|
-# 				n += (10 ** e) * i
-# 				e += 3
-# 			end
-# 			n
-# 		end
-# 	end
-# end
+require 'pp'
 
 STATES = ['OK', 'WARNING', 'CRITICAL', 'UNKNOWN']
 
@@ -30,15 +16,12 @@ STATES = ['OK', 'WARNING', 'CRITICAL', 'UNKNOWN']
 	:name => nil,
 	:warning => Gem::Version.new('0.0.0'),
 	:critical => Gem::Version.new('0.0.0'),
-	# :release => false,
-	:cmd => nil,
-	:cmdregexp => nil,
 }
 opts = OptionParser.new do |o|
-	o.banner = 'Usage: --name <user/repo> -w <number> -c <number>'
+	o.banner = 'Usage: --name <repo_name> -w <number> -c <number>'
 	o.separator('')
 	
-	o.on('-n', '--name <user/repo>', 'Repository Name. Example: ethereum/go-ethereum') do |name|
+	o.on('-n', '--name <repo_name>', 'Repository Name. Example: redcarpet') do |name|
 		@options[:name] = name
 	end
 	
@@ -50,18 +33,6 @@ opts = OptionParser.new do |o|
 		@options[:critical] = Gem::Version.new(num)
 	end
 	
-	# o.on('-c', '--release', 'Releases Only') do
-	# 	@options[:release] = true
-	# end
-	
-	o.on('--cmd <string>', 'Run command to check version.') do |cmd|
-		@options[:cmd] = cmd
-	end
-	
-	o.on('--cmdregexp <string>', 'RegExp to catch command output.') do |cmdregexp|
-		# puts "regexp: '#{cmdregexp}'"
-		@options[:cmdregexp] = Regexp.new(cmdregexp)
-	end
 	
 	o.on_tail('-h', '--help', 'Show this message.') do
 		puts o
@@ -73,20 +44,27 @@ ARGV << '-h' if ARGV.count == 0
 commands = opts.parse(ARGV)
 
 # Build URL.
-url = 'https://github.com/%s/releases.atom' % [
+url = 'https://rubygems.org/gems/%s/versions.atom' % [
 	@options[:name]
 ]
 
 latest_version = Gem::Version.new('0.0.0')
 open(url) do |rss|
-	feed = RSS::Parser.parse(rss)
+	feed = RSS::Parser.parse(rss, false)
 	
+	limit = 15
 	feed.items.each do |item|
 		version_items = item.id.content.split('/')
 		version = Gem::Version.new(version_items.last.gsub(/^v\.?/, ''))
 		
 		if version > latest_version
 			latest_version = version
+		end
+		
+		if limit > 0
+			limit -= 1
+		else
+			break
 		end
 	end
 end

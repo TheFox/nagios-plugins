@@ -11,3 +11,5 @@
 ./check_file_type.rb -f ./not_found -r ASCIX -i
 
 ./check_git_commit_age.rb -r git@github.com:ansible/ansible.git -d tmp/ansible -w 1d -c 2d
+
+./check_gem_release.rb -n redcarpet -w 3.4.1 -c 3.5.0

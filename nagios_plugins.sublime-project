@@ -2,7 +2,7 @@
 	"folders":[
 		{
 			"path": ".",
-			"name": "NagiosPlugins",
+			"name": "Nagios_Plugins",
 			"folder_exclude_patterns": [ ],
 			"file_exclude_patterns": [ ]
 		}
