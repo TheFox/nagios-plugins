@@ -159,7 +159,6 @@ define service{
     use                             generic-service,graphed-service
     host_name                       fake
     service_description             Twitter Followers wikileaks
-    servicegroups                   twitter_services
     check_command                   check_twitter_followers_onlydata!wikileaks
 }
 
@@ -167,7 +166,6 @@ define service{
     use                             generic-service,graphed-service
     host_name                       fake
     service_description             Twitter Followers briankrebs
-    servicegroups                   twitter_services
     check_command                   check_twitter_followers_below!briankrebs!222000!200000
 }
 ```
