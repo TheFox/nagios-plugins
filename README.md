@@ -335,7 +335,7 @@ Time string examples:
 
 Script: [check_github_release.rb](check_github_release.rb)
 
-This script can be used to check a release of a GitHub Repository. You can either choose a specific version, or dynamic. When checking the version dynamically you specify a command (`--cmd`) and a [regular expression](https://en.wikipedia.org/wiki/Regular_expression) (`--cmdregexp`) to read the current version from the installed software.
+This script can be used to check a release of a [GitHub](https://github.com/) Repository. You can either choose a specific version, or dynamic. When checking the version dynamically you specify a command (`--cmd`) and a [regular expression](https://en.wikipedia.org/wiki/Regular_expression) (`--cmdregexp`) to read the current version from the installed software.
 
 ![](https://img.fox21.at/public/20180531/nagios_20180531_121323_s.png)
 
@@ -383,6 +383,49 @@ define service{
     host_name                       fake
     service_description             GitHub: ethereum/go-ethereum
     check_command                   check_github_release_cmd!ethereum/go-ethereum!geth version!^Version: (\d{1,3}\.\d{1,3}\.\d{1,3})
+}
+```
+
+## Check (Ruby) Gem Release Nagios Plugin
+
+Script: [check_gem_release.rb](check_gem_release.rb)
+
+This script can be used to check a release of a [RubyGems](https://rubygems.org/) Repository.
+
+![](https://img.fox21.at/public/20180603/nagios_20180603_130835_s.png)
+
+## Usage
+
+Since this plugin doesn't rely on a specific host you can add it to any existing host. Or you can just create a fake host like example.com.
+
+Here is an example **Commands** configuration:
+
+```
+# commands.cfg
+
+define command{
+	command_name	check_gem_release
+	command_line	$USER1$/check_gem_release.rb -n $ARG1$ -w $ARG2$ -c $ARG3$
+}
+```
+
+Here is an example **Host** configuration:
+
+```
+# fake.cfg
+
+define host{
+    use                     generic-host
+    host_name               fake
+    alias                   FAKE
+    address                 www.example.com
+}
+
+define service{
+    use                             generic-service
+    host_name                       fake
+    service_description             Gem Release: redcarpet
+    check_command                   check_gem_release!redcarpet!3.4.1!3.5.0
 }
 ```
 
