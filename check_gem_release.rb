@@ -16,6 +16,8 @@ STATES = ['OK', 'WARNING', 'CRITICAL', 'UNKNOWN']
 	:name => nil,
 	:warning => Gem::Version.new('0.0.0'),
 	:critical => Gem::Version.new('0.0.0'),
+	:skip_pre => false,
+	:limit => nil,
 }
 opts = OptionParser.new do |o|
 	o.banner = 'Usage: --name <repo_name> -w <number> -c <number>'
@@ -33,6 +35,13 @@ opts = OptionParser.new do |o|
 		@options[:critical] = Gem::Version.new(num)
 	end
 	
+	o.on('-s', '--skip-pre', 'Skip pre versions. (Like RC)') do
+		@options[:skip_pre] = true
+	end
+	
+	o.on('-l' '--limit <number>', 'Limit latest versions.') do |limit|
+		@options[:limit] = limit.to_i
+	end
 	
 	o.on_tail('-h', '--help', 'Show this message.') do
 		puts o
@@ -52,19 +61,26 @@ latest_version = Gem::Version.new('0.0.0')
 open(url) do |rss|
 	feed = RSS::Parser.parse(rss, false)
 	
-	limit = 15
+	limit = @options[:limit]
 	feed.items.each do |item|
 		version_items = item.id.content.split('/')
-		version = Gem::Version.new(version_items.last.gsub(/^v\.?/, ''))
+		version_s = version_items.last.gsub(/^v\.?/, '')
+		version_o = Gem::Version.new(version_s)
 		
-		if version > latest_version
-			latest_version = version
+		if @options[:skip_pre] && /\.pre\./.match(version_s)
+			next
 		end
 		
-		if limit > 0
-			limit -= 1
-		else
-			break
+		if version_o > latest_version
+			latest_version = version_o
+		end
+		
+		if not limit.nil?
+			if limit > 0
+				limit -= 1
+			else
+				break
+			end
 		end
 	end
 end
