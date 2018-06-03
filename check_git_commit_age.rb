@@ -80,13 +80,13 @@ def convert_computer_time(s)
 		end
 	end
 	if s > 0 || x.keys.length == 0
-		x['s'] = s
+		x['s'] = s.to_i
 	end
 	
 	(
 		'%s%s' % [
 			prefix,
-			x.map{ |k| '%s%s' % k.reverse }.join(''),
+			x.map{ |k| '%d%s' % k.reverse }.join(''),
 		]
 	).strip
 end
