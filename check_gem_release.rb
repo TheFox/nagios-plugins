@@ -67,7 +67,7 @@ open(url) do |rss|
 		version_s = version_items.last.gsub(/^v\.?/, '')
 		version_o = Gem::Version.new(version_s)
 		
-		if @options[:skip_pre] && /\.pre\./.match(version_s)
+		if @options[:skip_pre] && /\.pre/.match(version_s)
 			next
 		end
 		
