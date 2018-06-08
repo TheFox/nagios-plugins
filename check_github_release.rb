@@ -83,10 +83,16 @@ open(url) do |rss|
 	
 	feed.items.each do |item|
 		version_items = item.id.content.split('/')
-		version = Gem::Version.new(version_items.last.gsub(/^v\.?/, ''))
+		version_s = version_items.last.gsub(/^v\.?/, '')
+		if version_res = /(\d{1,3}\.\d{1,3}\.\d{1,3})/.match(version_s)
+			# puts '%s = %s' % [version_s, version_res[1]]
+			version_o = Gem::Version.new(version_res[1])
+		else
+			raise 'Version string not matching: %s' % [version_s]
+		end
 		
-		if version > latest_version
-			latest_version = version
+		if version_o > latest_version
+			latest_version = version_o
 		end
 	end
 end
