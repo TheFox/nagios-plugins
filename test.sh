@@ -3,6 +3,7 @@
 ./check_bitcoin_price.rb -n bitcoin -f EUR -w 1000 -c 500 -b
 ./check_bsto_series.rb -n Mr-Robot -s 3 -w 1 -c 2 -l de
 ./check_bsto_series.rb -n Mr-Robot -s 40 -w 1 -c 2 -l de
+./check_date.rb -d 2018-12-31 -w 6m -c 1m
 ./check_file_type.rb -f ./not_found -r ASCIX -i
 ./check_file_type.rb -f ./test.sh -r ASCII
 ./check_file_type.rb -f ./test.sh -r ASCIX
