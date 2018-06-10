@@ -103,7 +103,7 @@ end
 	:pull_timeout => nil,
 }
 opts = OptionParser.new do |o|
-	o.banner = 'Usage: --repository <string> --destination -w <seconds> -c <seconds>'
+	o.banner = 'Usage: --repository <string> --destination <string> -w <time> -c <time>'
 	o.separator('')
 	
 	o.on('-r', '--repository <string>', 'URL/path to the Git repository.') do |repo|
