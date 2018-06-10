@@ -7,7 +7,6 @@
 
 require 'optparse'
 require 'time'
-require 'pp'
 
 STATES = ['OK', 'WARNING', 'CRITICAL', 'UNKNOWN']
 
@@ -114,8 +113,6 @@ opts = OptionParser.new do |o|
 end
 ARGV << '-h' if ARGV.count == 0
 commands = opts.parse(ARGV)
-
-pp @options
 
 # Calc diff
 diff_n = @options[:date] - Time.now
