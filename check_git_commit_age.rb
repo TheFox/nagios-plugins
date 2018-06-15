@@ -93,6 +93,8 @@ end
 
 @options = {
 	:repo => nil,
+	:branch => nil,
+	:depth => nil,
 	:dst => nil,
 	:git_data => nil,
 	:git_pull_file => nil,
@@ -103,11 +105,19 @@ end
 	:pull_timeout => nil,
 }
 opts = OptionParser.new do |o|
-	o.banner = 'Usage: --repository <string> --destination <string> -w <time> -c <time>'
+	o.banner = 'Usage: --repository <string> --branch <string> --depth <number> --destination <string> -w <time> -c <time>'
 	o.separator('')
 	
 	o.on('-r', '--repository <string>', 'URL/path to the Git repository.') do |repo|
 		@options[:repo] = repo
+	end
+	
+	o.on('-b', '--branch <string>', 'Switch to branch.') do |branch|
+		@options[:branch] = branch
+	end
+	
+	o.on('-d', '--depth <number>', 'Git Depth') do |depth|
+		@options[:depth] = depth.to_i
 	end
 	
 	o.on('-d', '--destination <string>', 'Path to local destination. For example /tmp/my-repo') do |dst|
@@ -143,8 +153,26 @@ if not @options[:dst].exist?
 	@options[:dst].mkpath
 end
 
+if not @options[:branch].nil?
+	# Do not use depth when switching to another branch.
+	@options[:depth] = nil
+end
+
 if not @options[:git_data].exist?
-	git_clone = system('git clone --quiet --depth 1 "%s" "%s"' % [@options[:repo], @options[:git_data].to_s])
+	git_clone_cmds = [
+		'git clone --quiet',
+	]
+	if not @options[:depth].nil?
+		# Possible issue:
+		# When you use --depth for the very first clone you maybe cannot
+		# switch to another branch afterwards. You first have to delete the
+		# '--destination' folder and re-clone the complete repository with
+		# no depth set.
+		git_clone_cmds.push('--depth %d' % [@options[:depth]])
+	end
+	git_clone_cmds.push('"%s" "%s"' % [@options[:repo], @options[:git_data].to_s])
+	git_clone_cmd = git_clone_cmds.join(' ')
+	git_clone = system(git_clone_cmd)
 	if not git_clone
 		raise 'git clone failed'
 	end
@@ -158,6 +186,21 @@ next_pull = 0 # Pull always.
 git_pull = false
 Dir.chdir(@options[:dst]) do
 	Dir.chdir(@options[:git_data]) do
+		if not @options[:branch].nil?
+			git_checkout = system('git checkout --quiet -b %s origin/%s 2> /dev/null' % [
+				@options[:branch], @options[:branch],
+			])
+			if not git_checkout
+				git_checkout = system('git checkout --quiet %s 2> /dev/null' % [
+					@options[:branch],
+				])
+				
+				if not git_checkout
+					raise 'git checkout failed'
+				end
+			end
+		end
+		
 		if not @options[:pull_timeout].nil?
 			# Calc time for the next pull.
 			last_pull = read_file(@options[:git_pull_file]).to_i
