@@ -5,6 +5,7 @@
 # Use Coin Market Cap API to get the current coin price.
 
 
+#require 'pp'
 require 'net/http'
 require 'json'
 require 'optparse'
@@ -41,11 +42,11 @@ opts = OptionParser.new do |o|
 		@options[:critical_price] = price.to_f
 	end
 	
-	o.on('-a', '--above', 'Return OK when price is above. (default)') do
+	o.on('-a', '--above', 'Return WARNING/CRITICAL when price is above. (default)') do
 		@options[:above] = true
 	end
 	
-	o.on('-b', '--below', 'Return OK when price is below.') do
+	o.on('-b', '--below', 'Return WARNING/CRITICAL when price is below.') do
 		@options[:above] = false
 	end
 	
@@ -67,6 +68,7 @@ response = Net::HTTP.get(uri)
 
 # Parse JSON response to get Hash array.
 json_response = JSON.parse(response)
+#pp json_response
 
 # Take the first coin.
 coin = json_response.first
@@ -77,14 +79,14 @@ if coin.has_key?(fiat_key)
 	coin_price = coin[fiat_key].to_f
 else
 	# If we don't find a key report UNKNOWN state.
-	puts 'UNKNOWN'
+	puts STATES[3]
 	exit 1
 end
 
 state = 0
 additional_name = nil
 if @options[:above]
-	additional_name = 'Price above'
+	additional_name = 'Check above'
 	
 	if coin_price > @options[:critical_price]
 		state = 2
@@ -92,7 +94,7 @@ if @options[:above]
 		state = 1
 	end
 else
-	additional_name = 'Price below'
+	additional_name = 'Check below'
 	
 	if coin_price < @options[:critical_price]
 		state = 2
