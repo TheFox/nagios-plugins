@@ -1,5 +1,9 @@
 # Release Notes for Nagios Plugins v0.x
 
+## v0.10.0 - Check Temper Nagios Plugin
+
+- Nagios plugin for checking Temper USB Thermometer. Needs [urwen/temper](https://github.com/urwen/temper) python script to be installed.
+
 ## v0.9.0 - Check Date Nagios Plugin
 
 - Use RegExp to find correct version in Git Tags (releases).
